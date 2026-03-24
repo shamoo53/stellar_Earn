@@ -125,11 +125,7 @@ pub fn is_withdrawal_allowed(env: &Env) -> Result<bool, Error> {
 }
 
 /// Request pause with multi-sig threshold requirement
-pub fn request_pause(
-    env: &Env,
-    requester: Address,
-    reason: Option<Symbol>,
-) -> Result<(), Error> {
+pub fn request_pause(env: &Env, requester: Address, reason: Option<Symbol>) -> Result<(), Error> {
     // Require authentication from requester
     requester.require_auth();
 

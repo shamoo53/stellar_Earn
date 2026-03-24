@@ -1,7 +1,7 @@
 #![cfg(test)]
 
-use soroban_sdk::{Address, Env};
 use soroban_sdk::testutils::Address as _;
+use soroban_sdk::{Address, Env};
 
 // Note: Test integration tests would require proper setup with Soroban test harness
 // This file demonstrates the test structure and scenarios

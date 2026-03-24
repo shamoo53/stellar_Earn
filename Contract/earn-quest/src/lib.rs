@@ -6,8 +6,8 @@ mod admin;
 mod errors;
 mod escrow;
 mod init;
-mod payout;
 mod pausable;
+mod payout;
 mod quest;
 mod reputation;
 mod storage;
@@ -279,12 +279,7 @@ impl EarnQuestContract {
             return Err(Error::Unauthorized);
         }
 
-        pausable::initialize_pause_state(
-            &env,
-            timelock_delay,
-            required_signatures,
-            grace_period,
-        )
+        pausable::initialize_pause_state(&env, timelock_delay, required_signatures, grace_period)
     }
 
     /// Request pause with multi-sig (any authorized signer can request)
@@ -347,16 +342,18 @@ impl EarnQuestContract {
         required_signatures: Option<u32>,
         grace_period: Option<u64>,
     ) -> Result<(), Error> {
-        pausable::update_pause_config(&env, admin, timelock_delay, required_signatures, grace_period)
+        pausable::update_pause_config(
+            &env,
+            admin,
+            timelock_delay,
+            required_signatures,
+            grace_period,
+        )
     }
 
     /// Emergency withdrawal from paused contract (during grace period)
     /// Allows users to withdraw their escrowed funds during emergency pause
-    pub fn emergency_withdraw(
-        env: Env,
-        quest_id: Symbol,
-        creator: Address,
-    ) -> Result<i128, Error> {
+    pub fn emergency_withdraw(env: Env, quest_id: Symbol, creator: Address) -> Result<i128, Error> {
         // Allow withdrawal even during pause if grace period is active
         if pausable::is_contract_paused(&env)? && !pausable::is_withdrawal_allowed(&env)? {
             return Err(Error::EmergencyWindowClosed);
