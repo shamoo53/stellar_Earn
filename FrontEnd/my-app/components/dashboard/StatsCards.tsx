@@ -63,11 +63,14 @@ function StatCard({ title, value, icon, iconBg, trend, isLoading }: StatCardProp
 }
 
 export function StatsCards({ stats, isLoading }: StatsCardsProps) {
-  // Calculate success rate
-  const totalSubmissions = (stats?.questsCompleted ?? 0) + 3; // Assuming some pending/rejected
-  const successRate = totalSubmissions > 0
-    ? Math.round((stats?.questsCompleted ?? 0) / totalSubmissions * 100)
-    : 0;
+  // Use success rate from stats if available, otherwise calculate
+  const successRate = stats?.successRate !== undefined
+    ? stats.successRate
+    : (stats?.questsCompleted ?? 0) > 0
+      ? Math.round((stats?.questsCompleted ?? 0) / ((stats?.questsCompleted ?? 0) + (stats?.failedQuests ?? 0)) * 100)
+      : 94;
+
+  const totalEarned = Number(stats?.totalEarned || 2450);
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -89,7 +92,7 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
       />
       <StatCard
         title="Earned"
-        value={`${(stats?.totalEarnings ?? 2450).toLocaleString()} XLM`}
+        value={`${totalEarned.toLocaleString()} XLM`}
         icon={<span className="text-amber-400">💰</span>}
         iconBg="bg-amber-400/10"
         trend={{ value: '+12%', isPositive: true }}
@@ -97,7 +100,7 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
       />
       <StatCard
         title="Success Rate"
-        value={`${successRate || 94}%`}
+        value={`${successRate}%`}
         icon={<span className="text-purple-400">📈</span>}
         iconBg="bg-purple-400/10"
         trend={{ value: '+2%', isPositive: true }}
